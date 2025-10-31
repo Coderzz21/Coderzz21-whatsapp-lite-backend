@@ -4,5 +4,17 @@
     "message": "hiiii",
     "type": "text",
     "timestamp": "05/10/2025, 19:14:45"
+  },
+  {
+    "type": "file",
+    "message": "http://localhost:4000/uploads/1761931320372-Screenshot_2025-09-07_183634.png",
+    "sender": "system",
+    "timestamp": "31/10/2025, 10:52:00 pm"
+  },
+  {
+    "type": "file",
+    "message": "http://localhost:4000/uploads/1761931558539-Screenshot_2025-09-14_141040.png",
+    "sender": "system",
+    "timestamp": "31/10/2025, 10:55:58 pm"
   }
 ]

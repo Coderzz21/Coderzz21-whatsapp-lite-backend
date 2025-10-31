@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 
 // ===== STATIC UPLOADS FOLDER =====
-// Works both locally and on Render
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 app.use("/uploads", express.static(uploadDir));
@@ -59,15 +58,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ===== DETECT BACKEND URL (auto switch between local and Render) =====
-const getBackendURL = () => {
-  // If hosted on Render, use Render domain; otherwise use localhost
-  return process.env.RENDER_EXTERNAL_URL || "http://localhost:4000";
-};
+// ===== USE YOUR RENDER URL DIRECTLY =====
+const backendURL = "https://coderzz21-whatsapp-lite-backend-1.onrender.com";
 
 // ===== UPLOAD FILE ROUTE =====
 app.post("/upload", upload.single("file"), (req, res) => {
-  const backendURL = getBackendURL();
   const fileUrl = `${backendURL}/uploads/${req.file.filename}`;
 
   const now = new Date();
@@ -89,7 +84,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
     timestamp,
   };
 
-  // Save message and broadcast
   MESSAGES.push(msg);
   fs.writeFileSync(MESSAGES_FILE, JSON.stringify(MESSAGES, null, 2));
   io.emit("receive_message", msg);
@@ -97,7 +91,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ url: fileUrl });
 });
 
-// ===== AUTO DELETE FILES OLDER THAN 1 HOUR =====
+// ===== AUTO DELETE OLD FILES =====
 setInterval(() => {
   const now = Date.now();
   const files = fs.readdirSync(uploadDir);
@@ -143,8 +137,6 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(
-    `🚀 Server running on port ${PORT}
-📅 Local Time: ${new Date().toLocaleString("en-IN")}
-🌐 URL: ${getBackendURL()}`
+    `🚀 Server running on port ${PORT}\n🌐 Backend URL: ${backendURL}`
   );
 });
